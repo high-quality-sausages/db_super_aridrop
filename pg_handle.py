@@ -81,6 +81,10 @@ class PgHandler(object):
         Raises:
             psycopg2.errors.InvalidCatalogName: database "{db_name}" does not exist
         '''
+
+        assert db_name != 'postgres', \
+            '''drop database 'postgres' is not available'''
+
         conn = psycopg2.connect(self.config)
         conn.autocommit = True
 
