@@ -4,7 +4,8 @@ import psycopg2
 
 
 class PgHandler(object):
-    def __init__(self, db="postgres", user="postgres", password=None, host="127.0.0.1", port="5432"):
+    def __init__(self, db="postgres", user="postgres",
+                 password=None, host="127.0.0.1", port="5432"):
         '''
         Args:
             db: Database
@@ -25,10 +26,7 @@ class PgHandler(object):
                         port = {self.port}'
 
     def query(self, sql):
-        '''
-        Args:
-            sql: sql you want to query
-        '''
+        '''query sql'''
         try:
             conn = psycopg2.connect(self.config)
             cur = conn.cursor()
@@ -44,10 +42,8 @@ class PgHandler(object):
             return
 
     def execute(self, sql):
-        '''
-        Args:
-            sql: sql you want to execute
-        '''
+        '''execute sql'''
+
         try:
             conn = psycopg2.connect(self.config)
             cur = conn.cursor()
@@ -62,8 +58,37 @@ class PgHandler(object):
         except psycopg2.Error as e:
             print(str(traceback.format_exc()))
 
+    def create_database(self, db_name):
+        '''
+        build a new database
+        Args:
+            db_name: name of the database you want to create
+        Raises:
+            psycopg2.errors.DuplicateDatabase: database "{db_name}" already exists
+        '''
+        conn = psycopg2.connect(self.config)
+        conn.autocommit = True
+
+        cur = conn.cursor()
+        cur.execute(f'CREATE DATABASE {db_name};')
+        cur.close()
+
+    def drop_database(self, db_name):
+        '''
+        build a new database
+        Args:
+            db_name: name of the database you want to drop
+        Raises:
+            psycopg2.errors.InvalidCatalogName: database "{db_name}" does not exist
+        '''
+        conn = psycopg2.connect(self.config)
+        conn.autocommit = True
+
+        cur = conn.cursor()
+        cur.execute(f'DROP DATABASE {db_name};')
+        cur.close()
+
 
 if __name__ == "__main__":
-    pg = PgHandler("moviesite", "postgres", "0000")
-    sql = "select * from movies_movie"
-    print(pg.query(sql))
+    pg = PgHandler("postgres", "postgres", "0000")
+    pg.drop_database('hah')
