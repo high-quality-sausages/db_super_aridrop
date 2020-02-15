@@ -85,10 +85,44 @@ class RedisHandler(object):
         conn.close()
         return result
 
+    def lpush(self, key, *values):
+        '''
+        LPUSH key value1,..., valuen
+        Args:
+            key: key of the redis list
+            *values: (value1,..., valuen)
+        '''
+        conn = self.__connect()
+        for value in values:
+            conn.lpush(key, value)
+        conn.close()
+        return
+
+    def lpop(self, key):
+        '''
+        LPOP key
+        '''
+        conn = self.__connect()
+        try:
+            result = str(conn.lpop(key), encoding='utf-8')
+        except:
+            result = ''
+        conn.close()
+        return result
+
+    def publish(self, channel, message):
+        '''
+        PUBLISH channel message
+        '''
+        conn = self.__connect()
+        result = conn.publish(channel, message)
+        conn.close()
+        return result
+
 
 if __name__ == "__main__":
     rd_handler = RedisHandler()
     # rd_handler.set_("name", "I am z bc")
-    # rd_handler.getrange("name", 0, -1)
-    rd_handler.hset("myhash", "field1", 100, "field2", 2)
-    # print(rd_handler.del_("name"))
+    # rd_handler.lpush('list1', 'a', 'b', 'c')
+    # print(rd_handler.lpop("list100"))
+    rd_handler.publish('channel102', 'hello world')
