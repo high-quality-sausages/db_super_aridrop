@@ -86,6 +86,7 @@ class PgHandler(object):
             db_name: name of the database you want to drop
         Raises:
             psycopg2.errors.InvalidCatalogName: database "{db_name}" does not exist
+            Exception: drop database "{db_name}" failed
         '''
 
         assert db_name != 'postgres', \
@@ -95,10 +96,46 @@ class PgHandler(object):
         conn.autocommit = True
 
         cur = conn.cursor()
-        cur.execute(f'DROP DATABASE {db_name};')
-        cur.close()
+        print(f'You are dropping database {db_name}!')
+        confirm = input()
+        if confirm == 'y' or 'Y':
+            try:
+                cur.execute(f'DROP DATABASE {db_name};')
+                cur.close()
+            except:
+                raise Exception(f'drop database "{db_name}" failed')
+        else:
+            return
+
+    def rebuild_database(self, db_name):
+        '''
+        drop and create a new database '{db_name}'
+        Args:
+            db_name: name of the database you want to rebuild
+        Raises:
+            psycopg2.errors.InvalidCatalogName: database "{db_name}" does not exist
+            Exception: rebuild database "{db_name}" failed
+        '''
+
+        assert db_name != 'postgres', \
+            '''rebuild database 'postgres' is not available'''
+        conn = self.__connect()
+        conn.autocommit = True
+        cur = conn.cursor()
+        print(f'You are rebuilding database {db_name}!')
+        confirm = input()
+        if confirm == 'y' or 'Y':
+            try:
+                cur.execute(f'DROP DATABASE {db_name};')
+                cur.execute(f'CREATE DATABASE {db_name};')
+            except:
+                raise Exception(f'rebuild database "{db_name}" failed')
+        else:
+            return
 
 
 if __name__ == "__main__":
     pg = PgHandler("moviesite", "postgres", "0000")
     print(pg.query("select * from comments_comment"))
+    pg.create_database('hah')
+    pg.rebuild_database('hah')
