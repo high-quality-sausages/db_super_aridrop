@@ -96,7 +96,7 @@ class PgHandler(object):
         conn.autocommit = True
 
         cur = conn.cursor()
-        print(f'You are dropping database {db_name}!')
+        print(f'You are dropping database {db_name}! (y/N)')
         confirm = input()
         if confirm == 'y' or 'Y':
             try:
@@ -122,7 +122,7 @@ class PgHandler(object):
         conn = self.__connect()
         conn.autocommit = True
         cur = conn.cursor()
-        print(f'You are rebuilding database {db_name}!')
+        print(f'You are rebuilding database {db_name}! (y/N)')
         confirm = input()
         if confirm == 'y' or 'Y':
             try:
@@ -136,6 +136,6 @@ class PgHandler(object):
 
 if __name__ == "__main__":
     pg = PgHandler("moviesite", "postgres", "0000")
-    print(pg.query("select * from comments_comment"))
-    pg.create_database('hah')
-    pg.rebuild_database('hah')
+    # print(pg.query("select * from comments_comment"))
+    pg.drop_database('test_db')
+    # pg.rebuild_database('hah')
